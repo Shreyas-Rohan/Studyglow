@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>StudyGlow Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #000;
+            color: white;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: 0.5s;
+        }
+
+        body.light {
+            background: linear-gradient(#ffffff, #eef3f9);
+            color: #222;
+        }
+
+        canvas {
+            position: fixed;
+            💡 top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .overlay {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .center-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            gap: 16px;
+        }
+
+        .card {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 17px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        body.light .card {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        input {
+            width: 90px;
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 26px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .locked {
+            opacity: 0.7;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .sensor {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .alert {
+            font-size: 14px;
+            margin-top: 6px;
+            opacity: 0.8;
+        }
+
+        💡 .status {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="overlay">
+        <div class="toggle" onclick="toggleTheme()">🌙</div>
+
+        <h1>💡 StudyGlow</h1>
+        <p style="text-align:center;">Smart Study Session Controller</p>
+
+        <div class="center-box">
+
+            <div class="card">
+                ⏱ Set Study Time (minutes)<br><br>
+                <input type="number" id="studyInput" value="60" min="10" step="10">
+            </div>
+
+            <div class="card">
+                🛑 Break Time (auto-locked)<br><br>
+                <span id="breakTime">10 minutes</span>
+                <div class="locked">Calculated as 1/6 of study time</div>
+            </div>
+
+            <div class="card">
+                👤 Student Status<br><br>
+                <span class="status" id="studentStatus">Waiting for device…</span>
+            </div>
+
+            <div class="card">
+                ⏳ Remaining Time<br><br>
+                <span id="remaining">Not Started</span>
+            </div>
+
+            <div class="card">
+                🔊 Noise Level<br><br>
+                <span class="sensor" id="noise">--</span>
+                <div class="alert" id="noiseAlert"></div>
+            </div>
+
+            <div class="card">
+                💡 Light Level<br><br>
+                <span class="sensor" id="light">--</span>
+                <div class="alert" id="lightAlert"></div>
+            </div>
+
+            <div class="card">
+                ▶ Resume Session<br><br>
+                <button id="resumeBtn" onclick="resumeTimer()" disabled>Resume</button>
+                <div class="locked" id="resumeNote">
+                    Start the timer in device to unlock Resume button.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let timer = null;
+        let remainingSeconds = 0;
+        let deviceStarted = false;
+
+        // 🎨 THEME TOGGLE
+        function toggleTheme() {
+            document.body.classList.toggle("light");
+
+            if (document.body.classList.contains("light")) {
+                createSnowflakes();
+            } else {
+                createStars();
+            }
+        }
+
+        // 🌌 CANVAS BACKGROUND ENGINE
+        const canvas = document.getElementById("bgCanvas");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+
+        function createStars() {
+            particles = [];
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    type: "star",
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.5 + 0.5,
+                    dx: (Math.random() - 0.5) * 0.3,
+                    dy: (Math.random() - 0.5) * 0.3
+                });
+            }
+        }
+
+        function createSnowflakes() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    type: "snow",
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 2 + 1,
+                    dy: Math.random() * 0.8 + 0.3,
+                    dx: Math.random() * 0.4 - 0.2
+                }); 2
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.type === "star" ? "white" : "rgba(180,180,255,0.9)";
+                ctx.fill();
+
+                if (p.type === "star") {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+                }
+
+                if (p.type === "snow") {
+                    p.y += p.dy;
+                    p.x += p.dx;
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                }
+            });
+
+            requestAnimationFrame(drawParticles);
+        }
+
+        createStars();
+        drawParticles();
+
+        // ⏱ BREAK LOGIC (1/6 RATIO)
+        function getBreakTime(workMinutes) {
+            const breakDecimal = workMinutes / 6;
+            const mins = Math.floor(breakDecimal);
+            const secs = Math.round((breakDecimal - mins) * 60);
+            return mins + " minutes and " + secs + " seconds";
+        }
+
+        function updateBreakTime() {
+            let studyMinutes = parseInt(document.getElementById("studyInput").value);
+            document.getElementById("breakTime").innerText = getBreakTime(studyMinutes);
+        }
+
+        document.getElementById("studyInput").addEventListener("input", updateBreakTime);
+        updateBreakTime();
+
+        // ▶ RESUME LOGIC
+        function resumeTimer() {
+            if (!deviceStarted) return;
+
+            let studyMinutes = parseInt(document.getElementById("studyInput").value);
+
+            if (remainingSeconds === 0) {
+                remainingSeconds = studyMinutes * 60;
+            }
+
+            if (timer !== null) return;
+
+            timer = setInterval(() => {
+                remainingSeconds--;
+
+                let mins = Math.floor(remainingSeconds / 60);
+                let secs = remainingSeconds % 60;
+
+                document.getElementById("remaining").innerText =
+                    mins + "m " + (secs < 10 ? "0" : "") + secs + "s";
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(timer);
+                    timer = null;
+                    document.getElementById("remaining").innerText = "Session Complete 🎉";
+                    document.getElementById("studentStatus").innerText = "Session Completed";
+                }
+            }, 1000);
+        }
+
+        // 📡 SENSOR + DEVICE STATUS (DEMO MODE)
+        function fetchSensorData() {
+            const demoData = {
+                noise: Math.random() > 0.6 ? "High" : "Low",
+                light: Math.random() > 0.5 ? "Dim" : "Bright",
+                status: ["Studying", "Break Time", "Inactivity Detected", "Session Completed"]
+                [Math.floor(Math.random() * 4)],
+                deviceStarted: Math.random() > 0.5
+            };
+
+            document.getElementById("noise").innerText = demoData.noise;
+            document.getElementById("light").innerText = demoData.light;
+            document.getElementById("studentStatus").innerText = demoData.status;
+
+            document.getElementById("noiseAlert").innerText =
+                demoData.noise === "High" ? "⚠️ Too much noise!" : "Environment OK";
+
+            document.getElementById("lightAlert").innerText =
+                demoData.light === "Dim" ? "⚠️ Low light!" : "Lighting OK";
+
+            deviceStarted = demoData.deviceStarted;
+
+            const resumeBtn = document.getElementById("resumeBtn");
+            const resumeNote = document.getElementById("resumeNote");
+
+            if (deviceStarted) {
+                resumeBtn.disabled = false;
+                resumeNote.innerText = "Resume unlocked by device.";
+            } else {
+                resumeBtn.disabled = true;
+                resumeNote.innerText = "Start the timer in device to unlock Resume button.";
+            }
+        }
+
+        setInterval(fetchSensorData, 5000);
+        fetchSensorData();
+    </script>
+
+</body>
+
+</html>
