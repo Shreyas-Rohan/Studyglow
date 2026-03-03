@@ -358,41 +358,46 @@
     }, 1000);
   }
 
-  function fetchSensorData() {
-    const demoData = {
-      noise: Math.random() > 0.6 ? "High" : "Low",
-      light: Math.random() > 0.5 ? "Dim" : "Bright",
-      status: ["Studying", "Break Time", "Inactivity Detected", "Session Completed"]
-        [Math.floor(Math.random() * 4)],
-      deviceStarted: Math.random() > 0.5
-    };
+ function fetchSensorData() {
+  fetch("http://192.168.0.105/data")  // CHANGE IP
+    .then(response => response.json())
+    .then(data => {
 
-    document.getElementById("noise").innerText = demoData.noise;
-    document.getElementById("light").innerText = demoData.light;
-    document.getElementById("studentStatus").innerText = demoData.status;
+      document.getElementById("noise").innerText = data.noise;
+      document.getElementById("light").innerText = data.light;
 
-    document.getElementById("noiseAlert").innerText =
-      demoData.noise === "High" ? "⚠️ Too much noise!" : "Environment OK";
+      if (data.onBreak) {
+        document.getElementById("studentStatus").innerText = "Break Time ☕";
+      } 
+      else if (data.studying) {
+        document.getElementById("studentStatus").innerText = "Studying 📚";
+      } 
+      else {
+        document.getElementById("studentStatus").innerText = "Session Completed";
+      }
 
-    document.getElementById("lightAlert").innerText =
-      demoData.light === "Dim" ? "⚠️ Low light!" : "Lighting OK";
+      document.getElementById("remaining").innerText =
+        data.minutesLeft + " min";
 
-    deviceStarted = demoData.deviceStarted;
+      deviceStarted = data.studying;
 
-    const resumeBtn = document.getElementById("resumeBtn");
-    const resumeNote = document.getElementById("resumeNote");
+      const resumeBtn = document.getElementById("resumeBtn");
+      const resumeNote = document.getElementById("resumeNote");
 
-    if (deviceStarted) {
-      resumeBtn.disabled = false;
-      resumeNote.innerText = "Resume unlocked by device.";
-    } else {
-      resumeBtn.disabled = true;
-      resumeNote.innerText = "Start the timer in device to unlock Resume button.";
-    }
-  }
-
-  setInterval(fetchSensorData, 5000);
-  fetchSensorData();
+      if (data.studying) {
+        resumeBtn.disabled = false;
+        resumeNote.innerText = "Session running on device.";
+      } else {
+        resumeBtn.disabled = true;
+        resumeNote.innerText = "Start from device.";
+      }
+    })
+    .catch(err => {
+      console.log("Connection failed");
+    });
+   setInterval(fetchSensorData, 1000);
+fetchSensorData();
+}
 </script>
 
 </body>
