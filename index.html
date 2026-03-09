@@ -91,7 +91,7 @@
         h1 {
             text-align: center;
             margin: 15px auto;
-            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-size: clamp(1.8rem, 8vw, 3.5rem);
             font-weight: 800;
             font-family: 'Outfit', sans-serif;
             background: linear-gradient(135deg, #00f5ff, #00ff9c);
@@ -99,11 +99,12 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(0, 255, 213, 0.3);
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            width: 90%;
-            overflow-wrap: break-word;
-            line-height: 1.2;
+            width: 95%;
+            overflow-wrap: normal;
+            word-break: keep-all;
+            line-height: 1.1;
         }
 
         body.light h1 {
@@ -118,28 +119,33 @@
             color: #334e68;
         }
 
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .profile-container {
+            position: relative;
+            z-index: 10;
+        }
+
         .toggle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
             font-size: 24px;
             cursor: pointer;
             z-index: 2;
             transition: all 0.3s ease;
         }
-        .toggle:hover {
-            transform: scale(1.1);
-        }
 
         @media(max-width: 480px) {
-            .profile-container {
-                right: 55px;
-            }
-            .toggle {
-                right: 10px;
+            .top-bar {
+                justify-content: space-between;
+                width: 100%;
             }
             .profile-btn {
-                padding: 5px 10px;
+                padding: 5px 12px;
                 font-size: 14px;
             }
         }
@@ -461,19 +467,20 @@
 
     <div class="overlay" id="dashboard" style="display:none;">
 
-        <div class="profile-container">
-            <button class="profile-btn" onclick="toggleDropdown()">Profile</button>
-            <div class="dropdown-menu" id="profileDropdown">
-                <div class="dropdown-item" id="analyticsItem" onclick="window.location.href='analytics.html'">
-                    📊 Analytics
-                </div>
-                <div class="dropdown-item" onclick="logout()">
-                    🚪 Log Out
+        <div class="top-bar">
+            <div class="profile-container">
+                <button class="profile-btn" onclick="toggleDropdown()">Profile</button>
+                <div class="dropdown-menu" id="profileDropdown">
+                    <div class="dropdown-item" id="analyticsItem" onclick="window.location.href='analytics.html'">
+                        📊 Analytics
+                    </div>
+                    <div class="dropdown-item" onclick="logout()">
+                        🚪 Log Out
+                    </div>
                 </div>
             </div>
+            <div class="toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
         </div>
-
-        <div class="toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
 
         <h1>💡 StudyGlow</h1>
         <p style="text-align:center; opacity: 0.8;">Smart Study Session Controller</p>
