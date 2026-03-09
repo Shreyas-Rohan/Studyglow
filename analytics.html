@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyGlow Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #000;
+            color: white;
+            overflow-x: hidden;
+            transition: all 0.5s ease;
+        }
+        body.light {
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            color: #102a43;
+        }
+        canvas#bgCanvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .overlay { position: relative; z-index: 1; min-height: 100vh; padding: 20px; }
+        .header-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+        h1 { 
+            text-align: center; 
+            margin-top: 10px; 
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(0, 255, 213, 0.5); 
+            transition: all 0.5s ease;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #00f5ff, #00ff9c);
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 213, 0.5);
+            transition: 0.3s;
+        }
+        .back-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 255, 213, 0.8); }
+
+        .toggle {
+            position: absolute;
+            top: 20px;
+            right: 210px;
+            font-size: 26px;
+            cursor: pointer;
+            z-index: 2;
+            transition: 0.3s;
+        }
+        
+        @media(max-width: 600px) {
+             .toggle {
+                  right: 20px;
+                  top: 70px;
+             }
+        }
+
+        .toggle:hover {
+            transform: scale(1.1);
+        }
+        .streak-container {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .streak-circle {
+            padding: 5px 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #00ffd5;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 0 15px #00ffd5;
+            flex-direction: row;
+            transition: all 0.5s ease;
+        }
+        .toggle-container {
+            max-width: 600px;
+            margin: 20px auto;
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 213, 0.3);
+            transition: all 0.5s ease;
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            opacity: 0.6;
+        }
+        .toggle-btn.active {
+            background: rgba(0, 255, 213, 0.2);
+            opacity: 1;
+            color: #00ffd5;
+            box-shadow: inset 0 0 10px rgba(0, 255, 213, 0.3);
+        }
+        .sub-toggle-container {
+            max-width: 400px;
+            margin: 0 auto 30px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .sub-toggle {
+            padding: 6px 15px;
+            border-radius: 15px;
+            border: 1px solid #00ffd5;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            opacity: 0.6;
+        }
+        .sub-toggle.active { background: #00ffd5; color: black; opacity: 1; }
+        .main-content {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .chart-box {
+            flex: 3;
+            min-width: 350px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.5s ease;
+        }
+        .table-box {
+            flex: 2;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.5s ease;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid rgba(0, 255, 213, 0.3); color: #00ffd5; }
+        td { padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+        .footer-summary {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(0, 255, 213, 0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            border: 1px dashed #00ffd5;
+            transition: all 0.5s ease;
+        }
+        #pieChartContainer { display: none; }
+        
+        body.light h1 {
+            background: linear-gradient(135deg, #243b55, #141e30);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+        }
+        
+        body.light .streak-circle {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: #627d98;
+            box-shadow: 0 0 15px rgba(98, 125, 152, 0.3);
+            color: #102a43;
+        }
+        
+        body.light .toggle-container {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(98, 125, 152, 0.3);
+            color: #102a43;
+        }
+        
+        body.light .toggle-btn.active {
+            background: rgba(98, 125, 152, 0.2);
+            color: #102a43;
+            box-shadow: inset 0 0 10px rgba(98, 125, 152, 0.2);
+        }
+        
+        body.light .chart-box, body.light .table-box {
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(98, 125, 152, 0.2);
+            box-shadow: 0 10px 20px rgba(16, 42, 67, 0.05);
+            color: #102a43;
+        }
+        
+        body.light th {
+            border-bottom: 2px solid rgba(98, 125, 152, 0.5);
+            color: #102a43;
+        }
+        
+        body.light td {
+            border-bottom: 1px solid rgba(98, 125, 152, 0.2);
+        }
+        
+        body.light .footer-summary {
+            background: rgba(98, 125, 152, 0.1);
+            border: 1px dashed rgba(98, 125, 152, 0.5);
+            color: #102a43;
+        }
+
+        @media(max-width: 900px) {
+            .main-content { flex-direction: column; }
+            .chart-box, .table-box { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <div class="overlay">
+        <div class="streak-container">
+            <div class="streak-circle" id="streakVal">🔥 0</div>
+        </div>
+        <div class="toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
+        <a href="index.html?return=dashboard" class="back-btn">Back to Dashboard</a>
+        
+        <div class="header-container">
+            <h1>StudyGlow Analytics</h1>
+        </div>
+
+        <div class="toggle-container">
+            <div id="lineToggle" class="toggle-btn active" onclick="switchChart('line')">Line Graph</div>
+            <div id="pieToggle" class="toggle-btn" onclick="switchChart('pie')">Pie Chart</div>
+        </div>
+
+        <div class="sub-toggle-container">
+            <div id="dailyBtn" class="sub-toggle active" onclick="switchView('daily')">Daily</div>
+            <div id="weeklyBtn" class="sub-toggle" onclick="switchView('weekly')">Weekly</div>
+            <div id="monthlyBtn" class="sub-toggle" onclick="switchView('monthly')">Monthly</div>
+        </div>
+
+        <div class="main-content">
+            <div class="chart-box">
+                <div id="lineChartContainer">
+                    <canvas id="lineChart"></canvas>
+                </div>
+                <div id="pieChartContainer">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+            <div class="table-box">
+                <h3 style="color: #00ffd5;">Session History</h3>
+                <table id="sessionTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+                <div class="footer-summary" id="footerSummary">
+                    Grand Total: 0 hrs | Streak: 0 days
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (localStorage.getItem("isGuest") === "true" || !localStorage.getItem("currentUser")) {
+            alert("You must be logged in to view analytics.");
+            window.location.href = "index.html";
+        }
+
+        let currentChartType = 'line';
+        let currentView = 'daily';
+        let lineChart, pieChart;
+
+        function loadData() {
+            const sessions = JSON.parse(localStorage.getItem('studySessions') || "[]");
+            const streak = localStorage.getItem('currentStreak') || 0;
+            document.getElementById('streakVal').innerText = "🔥 " + streak;
+            
+            renderTable(sessions);
+            updateCharts(sessions);
+            
+            const totalHours = sessions.reduce((sum, s) => sum + s.totalHours, 0).toFixed(2);
+            document.getElementById('footerSummary').innerText = `Grand Total: ${totalHours} hrs | Streak: ${streak} days`;
+        }
+
+        function renderTable(sessions) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            // Show last 7 sessions
+            [...sessions].reverse().slice(0, 7).forEach(s => {
+                const row = `<tr>
+                    <td>${s.date}</td>
+                    <td>${s.start}</td>
+                    <td>${s.end}</td>
+                    <td style="color: #00ffd5; font-weight: bold;">${s.totalHours}</td>
+                </tr>`;
+                body.innerHTML += row;
+            });
+        }
+
+        function getChartLabelsAndData(sessions) {
+            if (currentView === 'daily') {
+                const grouped = {};
+                sessions.forEach(s => {
+                    grouped[s.date] = (grouped[s.date] || 0) + s.totalHours;
+                });
+                const labels = Object.keys(grouped).sort();
+                return { labels: labels.map(l => l.split('-').slice(1).join('/')), data: labels.map(l => grouped[l]) };
+            } else if (currentView === 'weekly') {
+                // Mock weekly aggregation for demo
+                return { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], data: [5.2, 4.8, 6.5, 3.2] };
+            } else {
+                // Mock monthly
+                return { labels: ['Jan', 'Feb', 'Mar'], data: [12.5, 15.0, 8.4] };
+            }
+        }
+
+        function updateCharts(sessions) {
+            const chartData = getChartLabelsAndData(sessions);
+            const isLight = document.body.classList.contains("light");
+
+            if (lineChart) lineChart.destroy();
+            if (pieChart) pieChart.destroy();
+
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            lineChart = new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Hours Studied',
+                        data: chartData.data,
+                        borderColor: '#00f5ff',
+                        backgroundColor: 'rgba(0, 245, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#00ffd5',
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)' }, 
+                            ticks: { color: isLight ? '#102a43' : '#fff' } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: isLight ? '#102a43' : '#fff' } 
+                        }
+                    }
+                }
+            });
+
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        data: chartData.data,
+                        backgroundColor: [
+                            '#00ffd5', '#00f5ff', '#a855f7', '#3b82f6', '#facc15'
+                        ],
+                        borderWidth: isLight ? 1 : 0,
+                        borderColor: isLight ? '#fff' : 'transparent'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: isLight ? '#102a43' : '#fff', padding: 20 } }
+                    }
+                }
+            });
+        }
+
+        function switchChart(type) {
+            currentChartType = type;
+            document.getElementById('lineToggle').classList.toggle('active', type === 'line');
+            document.getElementById('pieToggle').classList.toggle('active', type === 'pie');
+            document.getElementById('lineChartContainer').style.display = type === 'line' ? 'block' : 'none';
+            document.getElementById('pieChartContainer').style.display = type === 'pie' ? 'block' : 'none';
+        }
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sub-toggle').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(view + 'Btn').classList.add('active');
+            loadData();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("light");
+            const toggleBtn = document.getElementById("themeToggle");
+
+            if (document.body.classList.contains("light")) {
+                toggleBtn.innerText = "☀️";
+                localStorage.setItem("theme", "light");
+                createSnowflakes();
+            } else {
+                toggleBtn.innerText = "🌙";
+                localStorage.setItem("theme", "dark");
+                createStars();
+            }
+            // Update charts colors dynamically
+            const sessions = JSON.parse(localStorage.getItem('studySessions') || "[]");
+            updateCharts(sessions);
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem("theme");
+            const toggleBtn = document.getElementById("themeToggle");
+            
+            if (savedTheme === "light") {
+                document.body.classList.add("light");
+                if(toggleBtn) toggleBtn.innerText = "☀️";
+            } else {
+                if(toggleBtn) toggleBtn.innerText = "🌙";
+            }
+        }
+
+        loadTheme();
+
+        /* Particles copied from index.html */
+        const canvas = document.getElementById("bgCanvas");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+        function createStars() {
+            particles = [];
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.5 + 0.5,
+                    dx: (Math.random() - 0.5) * 0.3,
+                    dy: (Math.random() - 0.5) * 0.3
+                });
+            }
+        }
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = "white";
+                ctx.fill();
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+        createStars();
+        drawParticles();
+        loadData();
+    </script>
+</body>
+</html>
