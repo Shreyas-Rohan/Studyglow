@@ -28,8 +28,12 @@
             margin-top: 10px; 
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
             text-shadow: 0 0 10px rgba(0, 255, 213, 0.5); 
             transition: all 0.5s ease;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
         }
         .back-btn {
             position: absolute;
@@ -69,12 +73,19 @@
             transform: scale(1.1);
         }
         .streak-container {
-            position: absolute;
-            top: 15px;
-            left: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        @media(min-width: 769px) {
+            .streak-container {
+                position: absolute;
+                top: 15px;
+                left: 20px;
+            }
         }
         .streak-circle {
             padding: 5px 15px;
@@ -234,13 +245,13 @@
 <body>
     <canvas id="bgCanvas"></canvas>
     <div class="overlay">
-        <div class="streak-container">
-            <div class="streak-circle" id="streakVal">🔥 0</div>
-        </div>
         <div class="toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
         <a href="index.html?return=dashboard" class="back-btn">Back to Dashboard</a>
         
         <div class="header-container">
+            <div class="streak-container">
+                <div class="streak-circle" id="streakVal">🔥 0</div>
+            </div>
             <h1>StudyGlow Analytics</h1>
         </div>
 
