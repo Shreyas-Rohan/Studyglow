@@ -90,8 +90,8 @@
 
         h1 {
             text-align: center;
-            margin-top: 10px;
-            font-size: 3.5rem;
+            margin: 15px auto;
+            font-size: clamp(2rem, 8vw, 3.5rem);
             font-weight: 800;
             font-family: 'Outfit', sans-serif;
             background: linear-gradient(135deg, #00f5ff, #00ff9c);
@@ -99,8 +99,11 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(0, 255, 213, 0.3);
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
+            width: 90%;
+            overflow-wrap: break-word;
+            line-height: 1.2;
         }
 
         body.light h1 {
@@ -118,14 +121,27 @@
         .toggle {
             position: absolute;
             top: 15px;
-            right: 20px;
-            font-size: 26px;
+            right: 15px;
+            font-size: 24px;
             cursor: pointer;
             z-index: 2;
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
         .toggle:hover {
             transform: scale(1.1);
+        }
+
+        @media(max-width: 480px) {
+            .profile-container {
+                right: 55px;
+            }
+            .toggle {
+                right: 10px;
+            }
+            .profile-btn {
+                padding: 5px 10px;
+                font-size: 14px;
+            }
         }
 
         .hero {
