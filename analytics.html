@@ -17,23 +17,32 @@
             transition: all 0.5s ease;
         }
         body.light {
-            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-            color: #102a43;
+            background: linear-gradient(135deg, #cbd5e0, #a0aec0);
+            color: #1a365d;
         }
         canvas#bgCanvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
         .overlay { position: relative; z-index: 1; min-height: 100vh; padding: 20px; }
         .header-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
         h1 { 
             text-align: center; 
-            margin-top: 10px; 
+            margin-top: 20px; 
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: clamp(1.8rem, 6vw, 2.5rem);
-            text-shadow: 0 0 10px rgba(0, 255, 213, 0.5); 
-            transition: all 0.5s ease;
+            font-size: clamp(2rem, 7vw, 3rem);
+            background: linear-gradient(90deg, #00f5ff, #00ff9c, #00f5ff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 213, 0.4);
+            animation: textShimmer 4s linear infinite;
             width: 90%;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        @keyframes textShimmer {
+            to { background-position: 200% center; }
         }
         .back-btn {
             position: absolute;
@@ -88,7 +97,7 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px; /* Added gap to prevent merging */
         }
 
         .toggle {
@@ -96,6 +105,8 @@
             cursor: pointer;
             z-index: 2;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
         }
 
         .back-btn {
@@ -109,8 +120,9 @@
             cursor: pointer;
             box-shadow: 0 0 15px rgba(0, 255, 213, 0.5);
             transition: 0.3s;
-            font-size: 14px;
+            font-size: 13px;
             white-space: nowrap;
+            height: fit-content;
         }
 
         @media(max-width: 480px) {
@@ -118,14 +130,17 @@
                 justify-content: center;
                 flex-direction: column;
                 gap: 15px;
+                padding: 10px 0;
             }
             .header-actions {
                 width: 100%;
                 justify-content: space-between;
                 order: -1;
+                padding: 0 10px;
             }
             .streak-container {
                 order: 0;
+                margin-top: 5px;
             }
         }
         .toggle-container {
@@ -180,24 +195,43 @@
         .chart-box {
             flex: 3;
             min-width: 350px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
             padding: 25px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.5s ease;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-box::after, .table-box::after {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 213, 0.05), transparent);
+            animation: globalShimmer 6s infinite;
+        }
+
+        @keyframes globalShimmer {
+            0% { left: -100%; }
+            30% { left: 150%; }
+            100% { left: 150%; }
         }
         .table-box {
             flex: 2;
             min-width: 300px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
             padding: 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.5s ease;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         th { text-align: left; padding: 12px; border-bottom: 2px solid rgba(0, 255, 213, 0.3); color: #00ffd5; }
@@ -224,44 +258,44 @@
         }
         
         body.light .streak-circle {
-            background: rgba(255, 255, 255, 0.8);
-            border-color: #627d98;
-            box-shadow: 0 0 15px rgba(98, 125, 152, 0.3);
-            color: #102a43;
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #2d3748;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            color: #1a365d;
         }
         
         body.light .toggle-container {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(98, 125, 152, 0.3);
-            color: #102a43;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #4a5568;
+            color: #1a365d;
         }
         
         body.light .toggle-btn.active {
-            background: rgba(98, 125, 152, 0.2);
-            color: #102a43;
-            box-shadow: inset 0 0 10px rgba(98, 125, 152, 0.2);
+            background: rgba(45, 55, 72, 0.15);
+            color: #1a365d;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
         }
         
         body.light .chart-box, body.light .table-box {
-            background: rgba(255, 255, 255, 0.65);
-            border: 1px solid rgba(98, 125, 152, 0.2);
-            box-shadow: 0 10px 20px rgba(16, 42, 67, 0.05);
-            color: #102a43;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid #4a5568;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            color: #1a365d;
         }
         
         body.light th {
-            border-bottom: 2px solid rgba(98, 125, 152, 0.5);
-            color: #102a43;
+            border-bottom: 2px solid #2d3748;
+            color: #1a365d;
         }
         
         body.light td {
-            border-bottom: 1px solid rgba(98, 125, 152, 0.2);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
         
         body.light .footer-summary {
-            background: rgba(98, 125, 152, 0.1);
-            border: 1px dashed rgba(98, 125, 152, 0.5);
-            color: #102a43;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px dashed #2d3748;
+            color: #1a365d;
         }
 
         @media(max-width: 900px) {
@@ -278,7 +312,6 @@
                 <div class="streak-circle" id="streakVal">🔥 0</div>
             </div>
             <div class="header-actions">
-                <div class="toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
                 <a href="index.html?return=dashboard" class="back-btn">Back to Dashboard</a>
             </div>
         </div>
@@ -462,49 +495,26 @@
             loadData();
         }
 
-        function toggleTheme() {
-            document.body.classList.toggle("light");
-            const toggleBtn = document.getElementById("themeToggle");
-
-            if (document.body.classList.contains("light")) {
-                toggleBtn.innerText = "☀️";
-                localStorage.setItem("theme", "light");
-                createSnowflakes();
-            } else {
-                toggleBtn.innerText = "🌙";
-                localStorage.setItem("theme", "dark");
-                createStars();
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+            if (!localStorage.getItem("theme")) {
+                loadTheme();
             }
-            // Update charts colors dynamically
-            const sessions = JSON.parse(localStorage.getItem('studySessions') || "[]");
-            updateCharts(sessions);
-        }
+        });
 
-        function loadTheme() {
-            const savedTheme = localStorage.getItem("theme");
-            const toggleBtn = document.getElementById("themeToggle");
-            
-            if (savedTheme === "light") {
-                document.body.classList.add("light");
-                if(toggleBtn) toggleBtn.innerText = "☀️";
-            } else {
-                if(toggleBtn) toggleBtn.innerText = "🌙";
-            }
-        }
-
-        loadTheme();
-
-        /* Particles copied from index.html */
+        /* Particles adapted from index.html */
         const canvas = document.getElementById("bgCanvas");
         const ctx = canvas.getContext("2d");
         let particles = [];
+        
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         window.onresize = resizeCanvas;
         resizeCanvas();
+
         function createStars() {
             particles = [];
             for (let i = 0; i < 120; i++) {
                 particles.push({
+                    type: "star",
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     r: Math.random() * 1.5 + 0.5,
@@ -513,21 +523,68 @@
                 });
             }
         }
+
+        function createSnowflakes() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    type: "snow",
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 2 + 1,
+                    dy: Math.random() * 0.8 + 0.3,
+                    dx: Math.random() * 0.4 - 0.2
+                });
+            }
+        }
+
         function drawParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = "white";
+                ctx.fillStyle = p.type === "star" ? "white" : "rgba(180,180,255,0.9)";
                 ctx.fill();
-                p.x += p.dx; p.y += p.dy;
-                if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+
+                if (p.type === "star") {
+                    p.x += p.dx; p.y += p.dy;
+                    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+                } else {
+                    p.y += p.dy; p.x += p.dx;
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                }
             });
             requestAnimationFrame(drawParticles);
         }
-        createStars();
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem("theme");
+            const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            
+            let actualTheme = savedTheme;
+            if (!actualTheme) {
+                actualTheme = systemPrefersDark ? "dark" : "light";
+            }
+
+            if (actualTheme === "light") {
+                document.body.classList.add("light");
+                createSnowflakes();
+            } else {
+                document.body.classList.remove("light");
+                createStars();
+            }
+            
+            // Re-render charts for visual consistency
+            const sessions = JSON.parse(localStorage.getItem('studySessions') || "[]");
+            updateCharts(sessions);
+        }
+
         drawParticles();
+        loadTheme();
         loadData();
     </script>
 </body>
