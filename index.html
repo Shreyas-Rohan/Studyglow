@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyGlow Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         * {
@@ -24,42 +25,28 @@
             transition: all 0.5s ease;
         }
 
-        /* Moving Gradient */
-
-        @keyframes gradientMove {
-            0% {
-                background-position: 0% 50%
-            }
-
-            50% {
-                background-position: 100% 50%
-            }
-
-            100% {
-                background-position: 0% 50%
-            }
-        }
-
+        /* Improved Light Mode for deeper contrast */
         body.light {
-            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-            color: #102a43;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            color: #1a365d;
         }
 
         body.light .hero {
-            background: rgba(255, 255, 255, 0.6);
-            border: 2px solid #627d98;
-            box-shadow: 0 0 25px rgba(98, 125, 152, 0.15);
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #2d3748;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            color: #1a365d;
         }
 
         body.light .card {
-            background: rgba(255, 255, 255, 0.65);
-            border: 1px solid rgba(98, 125, 152, 0.2);
-            box-shadow: 0 10px 20px rgba(16, 42, 67, 0.05);
-            color: #102a43;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #a0aec0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            color: #1a365d;
         }
 
         body.light .card:hover {
-            box-shadow: 0 15px 30px rgba(16, 42, 67, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
             transform: translateY(-6px);
         }
 
@@ -67,6 +54,42 @@
             background: rgba(255,255,255, 0.9);
             color: #102a43;
             border: 1px solid rgba(98, 125, 152, 0.3);
+        }
+
+        /* Support for icons in inputs */
+        .input-group {
+            position: relative;
+            width: 240px;
+            margin: 15px auto;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding-right: 40px;
+            margin: 0;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ccc;
+            cursor: pointer;
+            z-index: 5;
+            transition: 0.2s;
+        }
+
+        .input-group i:hover {
+            color: #fff;
+        }
+
+        body.light .input-group i {
+            color: #4a5568;
+        }
+
+        body.light .input-group i:hover {
+            color: #1a365d;
         }
 
         /* Canvas */
@@ -91,20 +114,24 @@
         h1 {
             text-align: center;
             margin: 15px auto;
-            font-size: clamp(1.8rem, 8vw, 3.5rem);
+            font-size: clamp(2rem, 9vw, 3.8rem);
             font-weight: 800;
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #00f5ff, #00ff9c);
+            background: linear-gradient(90deg, #00f5ff, #00ff9c, #00f5ff);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 255, 213, 0.3);
-            letter-spacing: 0.5px;
+            text-shadow: 0 0 30px rgba(0, 255, 213, 0.4);
+            letter-spacing: -1px;
             text-transform: uppercase;
             width: 95%;
-            overflow-wrap: normal;
-            word-break: keep-all;
-            line-height: 1.1;
+            line-height: 1;
+            animation: textShimmer 4s linear infinite;
+        }
+
+        @keyframes textShimmer {
+            to { background-position: 200% center; }
         }
 
         body.light h1 {
@@ -152,16 +179,33 @@
 
         .hero {
             width: 100%;
-            max-width: 420px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            padding: 22px;
-            border-radius: 18px;
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 24px;
             text-align: center;
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.25);
-            border: 2px solid #00ffd5;
-            margin: 20px auto;
-            transition: all 0.5s ease;
+            box-shadow: 0 0 40px rgba(0, 255, 213, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 213, 0.3);
+            margin: 25px auto;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 213, 0.1), transparent);
+            animation: globalShimmer 5s infinite;
+        }
+
+        @keyframes globalShimmer {
+            0% { left: -100%; }
+            20% { left: 150%; }
+            100% { left: 150%; }
         }
 
         .hero input {
@@ -307,16 +351,35 @@
         /* Cards */
 
         .card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            padding: 18px;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            padding: 22px;
+            border-radius: 20px;
             text-align: center;
             font-size: 17px;
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
-            transition: all 0.5s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(0, 255, 213, 0.1),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
         }
 
         /* Card hover */
@@ -410,16 +473,137 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(20, 20, 20, 0.9);
-            padding: 40px;
-            border-radius: 20px;
+            transform: translate(-50%, -50%) scale(1);
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(30px);
+            padding: 45px;
+            border-radius: 35px;
             text-align: center;
-            box-shadow: 0 0 35px rgba(0, 255, 213, 0.6);
+            box-shadow: 
+                0 0 80px rgba(0, 255, 213, 0.2),
+                inset 0 0 1px 1px rgba(255, 255, 255, 0.05);
             z-index: 999;
-            border: 2px solid #00ffd5;
-            width: 350px;
-            transition: all 0.5s ease;
+            border: 1px solid rgba(0, 255, 213, 0.3);
+            width: 90%;
+            max-width: 400px;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: containerAppear 0.8s ease-out, floatCard 6s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            top: -100%; left: -100%;
+            width: 300%; height: 300%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 213, 0.03), transparent);
+            animation: shimmerEffect 8s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes shimmerEffect {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Ambient glowing background inside the card */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(0, 255, 213, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -52%); }
+        }
+
+        @media(max-width: 400px) {
+            .login-container {
+                padding: 30px 20px;
+                width: 95%;
+            }
+        }
+
+        @keyframes containerAppear {
+            from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin: 15px auto;
+            transition: transform 0.3s ease;
+        }
+
+        .input-group:focus-within {
+            transform: translateY(-2px);
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            padding: 15px 45px 15px 15px !important;
+            border-radius: 14px !important;
+            color: #fff !important;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-group input:focus {
+            border-color: rgba(0, 255, 213, 0.6) !important;
+            background: rgba(0, 255, 213, 0.08) !important;
+            box-shadow: 0 0 20px rgba(0, 255, 213, 0.15);
+            outline: none;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .input-group input:focus + i {
+            color: #00ffd5;
+        }
+
+        .login-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px;
+            border-radius: 14px;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 1px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+        }
+
+        .login-tab.active {
+            background: #00ffd5;
+            color: #000;
+            box-shadow: 0 4px 15px rgba(0, 255, 213, 0.3);
         }
 
         .login-container h2 {
@@ -429,38 +613,176 @@
             text-shadow: 0 0 10px #00ffd5;
         }
 
-        .login-container input {
-            display: block;
-            margin: 10px auto;
-            padding: 10px;
-            width: 220px;
-            border-radius: 8px;
-            border: none;
-        }
-
         .login-container button {
             margin: 8px;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             background: #00ffd5;
             cursor: pointer;
             font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0, 255, 213, 0.3);
         }
+
+        .login-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 213, 0.5);
+        }
+
+        /* Modal for Profile Update */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #00ffd5;
+            padding: 30px;
+            border-radius: 20px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 255, 213, 0.3);
+        }
+
+        body.light .modal-content {
+            background: #fff;
+            color: #1a365d;
+            border-color: #2d3748;
+        }
+
+        .modal-content input {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: #111;
+            color: white;
+        }
+
+        body.light .modal-content input {
+            background: #f7fafc;
+            color: #1a365d;
+            border-color: #cbd5e0;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btns button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .save-btn { background: #00ffd5; color: #000; }
+        .cancel-btn { background: #ff4d4d; color: white; }
     </style>
 </head>
 
+
 <body>
     <div id="loginScreen" class="login-container">
-        <h2>Studyglow Login</h2>
-        <input type="email" id="email" placeholder="Enter Gmail">
-        <input type="password" id="password" placeholder="Enter Password">
-        <div style="margin-top: 15px;">
-            <button onclick="login()">Login</button>
-            <button onclick="signup()">Sign Up</button>
+        <div style="font-size: 45px; margin-bottom: 10px; filter: drop-shadow(0 0 10px #00ffd5);">💡</div>
+        <h2 id="loginTitle" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1px; margin-bottom: 20px;">StudyGlow</h2>
+        
+        <div class="login-tabs">
+            <div class="login-tab active" id="tab-login" onclick="switchLoginTab('login')">LOGIN</div>
+            <div class="login-tab" id="tab-signup" onclick="switchLoginTab('signup')">SIGN UP</div>
         </div>
-        <button onclick="guestLogin()" style="width: 85%; background: #00f5ff; margin-top: 10px;">Continue as Guest</button>
-        <p id="loginMsg" style="margin-top: 15px; font-size: 14px; color: #00ffd5;"></p>
+
+        <div class="input-group">
+            <input type="email" id="email" placeholder="Enter username">
+            <i class="fas fa-envelope"></i>
+        </div>
+        
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Enter password">
+            <i class="fas fa-eye" id="toggleLoginPass" onclick="togglePass('password', 'toggleLoginPass')"></i>
+        </div>
+
+        <div style="margin-top: 25px;">
+            <button id="mainLoginBtn" onclick="handleAuth()" style="width: 100%; margin: 0; padding: 14px;">Login</button>
+            <p id="forgotLink" style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 10px; cursor: pointer; text-decoration: underline;" onclick="openForgotModal()">Forgot Password?</p>
+        </div>
+        
+        <div style="margin: 20px 0; display: flex; align-items: center; gap: 10px;">
+            <div style="height: 1px; background: rgba(255,255,255,0.1); flex:1;"></div>
+            <div style="color: rgba(255,255,255,0.3); font-size: 11px;">PROCEED AS</div>
+            <div style="height: 1px; background: rgba(255,255,255,0.1); flex:1;"></div>
+        </div>
+        
+        <button onclick="guestLogin()" style="width: 100%; background: transparent; color: #00f5ff; border: 1px solid #00f5ff; padding: 10px; font-size: 13px;">Guest User</button>
+        <p id="loginMsg" style="margin-top: 15px; font-size: 13px; font-weight: bold;"></p>
+    </div>
+
+    <!-- Profile Update Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h3 id="profileTitle">Update Profile</h3>
+            <p id="currentUserDisplay" style="font-size: 12px; margin: 10px 0; opacity: 0.6;"></p>
+            
+            <input type="text" id="newName" placeholder="New Display Name">
+            <hr style="margin: 15px 0; border: 0.5px solid #333;">
+            <p style="font-size: 12px; text-align: left; margin-left: 5px;">Change Password:</p>
+            <div class="input-group" style="width:100%;">
+                <input type="password" id="currPass" placeholder="Current Password">
+                <i class="fas fa-eye" id="toggleCurrPass" onclick="togglePass('currPass', 'toggleCurrPass')"></i>
+            </div>
+            <div class="input-group" style="width:100%;">
+                <input type="password" id="newPass" placeholder="New Password">
+                <i class="fas fa-eye" id="toggleNewPass" onclick="togglePass('newPass', 'toggleNewPass')"></i>
+            </div>
+            
+            <p id="profileMsg" style="font-size: 12px; margin: 10px 0;"></p>
+            
+            <div class="modal-btns">
+                <button class="save-btn" onclick="saveProfileUpdates()">Save Changes</button>
+                <button class="cancel-btn" onclick="closeProfileModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Forgot Password Modal -->
+    <div id="forgotModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px;">Reset Password</h3>
+            <div id="forgotStep1">
+                <p style="font-size: 13px; margin-bottom: 15px; opacity: 0.8;">Enter your Gmail to receive reset link:</p>
+                <div class="input-group" style="width:100%;">
+                    <input type="email" id="forgotEmail" placeholder="Gmail Address">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <button class="save-btn" style="width:100%; margin-top:15px;" onclick="sendResetLink()">Send Reset Link</button>
+            </div>
+            <div id="forgotStep2" style="display:none;">
+                <p style="font-size: 13px; margin-bottom: 15px; color: #00ffd5;">Link Verified! Set new password:</p>
+                <div class="input-group" style="width:100%;">
+                    <input type="password" id="resetNewPass" placeholder="New Password">
+                    <i class="fas fa-eye" id="toggleReset1" onclick="togglePass('resetNewPass', 'toggleReset1')"></i>
+                </div>
+                <div class="input-group" style="width:100%;">
+                    <input type="password" id="resetConfirmPass" placeholder="Retype New Password">
+                    <i class="fas fa-eye" id="toggleReset2" onclick="togglePass('resetConfirmPass', 'toggleReset2')"></i>
+                </div>
+                <button class="save-btn" style="width:100%; margin-top:15px;" onclick="finishPasswordReset()">Update Password</button>
+            </div>
+            <p id="forgotMsg" style="font-size: 12px; margin-top: 15px;"></p>
+            <button class="cancel-btn" style="width:100%; margin-top:10px; background: transparent; border: 1px solid #ff4d4d;" onclick="closeForgotModal()">Cancel</button>
+        </div>
     </div>
 
     <canvas id="bgCanvas"></canvas>
@@ -471,6 +793,9 @@
             <div class="profile-container">
                 <button class="profile-btn" onclick="toggleDropdown()">Profile</button>
                 <div class="dropdown-menu" id="profileDropdown">
+                    <div class="dropdown-item" onclick="openProfileModal()">
+                        👤 Edit Profile
+                    </div>
                     <div class="dropdown-item" id="analyticsItem" onclick="window.location.href='analytics.html'">
                         📊 Analytics
                     </div>
@@ -649,15 +974,19 @@
             const savedTheme = localStorage.getItem("theme");
             const toggleBtn = document.getElementById("themeToggle");
             
-            if (savedTheme === "light") {
+            // Default to dark if nothing saved
+            let actualTheme = savedTheme || "dark";
+
+            if (actualTheme === "light") {
                 document.body.classList.add("light");
                 if(toggleBtn) toggleBtn.innerText = "☀️";
+                if (typeof createSnowflakes === 'function') createSnowflakes();
             } else {
+                document.body.classList.remove("light");
                 if(toggleBtn) toggleBtn.innerText = "🌙";
+                if (typeof createStars === 'function') createStars();
             }
         }
-        
-        loadTheme();
 
         /* Particle System */
 
@@ -676,6 +1005,7 @@
         window.onresize = resizeCanvas;
 
         resizeCanvas();
+        loadTheme();
 
         function createStars() {
 
@@ -920,6 +1250,38 @@
 
         }
 
+        let authMode = 'login';
+
+        function switchLoginTab(mode) {
+            authMode = mode;
+            const loginTab = document.getElementById('tab-login');
+            const signupTab = document.getElementById('tab-signup');
+            const emailInp = document.getElementById('email');
+            const passInp = document.getElementById('password');
+            const authBtn = document.getElementById('mainLoginBtn');
+            const msg = document.getElementById("loginMsg");
+            msg.innerText = "";
+
+            if (mode === 'login') {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                emailInp.placeholder = "Enter username";
+                passInp.placeholder = "Enter password";
+                authBtn.innerText = "Login";
+            } else {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                emailInp.placeholder = "Gmail Address";
+                passInp.placeholder = "Password";
+                authBtn.innerText = "Let's Go";
+            }
+        }
+
+        function handleAuth() {
+            if (authMode === 'login') login();
+            else signup();
+        }
+
         function signup() {
 
             let email = document.getElementById("email").value
@@ -928,44 +1290,224 @@
 
             if (!validEmail(email)) {
                 msg.innerText = "Enter valid Gmail"
+                msg.style.color = "#ff4d4d"
                 return
             }
 
             if (!strongPassword(pass)) {
                 msg.innerText = "Password must contain 8 chars, uppercase, number"
+                msg.style.color = "#ff4d4d"
                 return
             }
 
             let users = JSON.parse(localStorage.getItem("users") || "{}")
 
+            if (users[email]) {
+                msg.innerText = "Email already registered. Please login."
+                msg.style.color = "#ffcc00"
+                return
+            }
+
             users[email] = pass
 
             localStorage.setItem("users", JSON.stringify(users))
 
-            msg.innerText = "Account created. Now login."
+            msg.innerText = "Welcome! Account created. Switching to login..."
+            msg.style.color = "#00ffd5"
+            
+            setTimeout(() => {
+                switchLoginTab('login');
+                msg.innerText = "Now enter your password to enter.";
+            }, 1500);
 
         }
 
         function login() {
 
-            let email = document.getElementById("email").value
+            let input = document.getElementById("email").value
             let pass = document.getElementById("password").value
             let msg = document.getElementById("loginMsg")
 
             let users = JSON.parse(localStorage.getItem("users") || "{}")
+            let actualEmail = null;
 
-            if (users[email] && users[email] === pass) {
-
-                localStorage.setItem("currentUser", email);
-                localStorage.setItem("isGuest", "false");
-                startDashboard(false)
-
+            // 1. Check if input is a direct email match
+            if (users[input]) {
+                actualEmail = input;
             } else {
-
-                msg.innerText = "Invalid login"
-
+                // 2. Search for a matching display name
+                for (let email in users) {
+                    const savedName = localStorage.getItem("displayName_" + email);
+                    if (savedName && savedName.toLowerCase() === input.toLowerCase()) {
+                        actualEmail = email;
+                        break;
+                    }
+                }
             }
 
+            if (actualEmail && users[actualEmail] === pass) {
+                localStorage.setItem("currentUser", actualEmail);
+                localStorage.setItem("isGuest", "false");
+                startDashboard(false)
+            } else {
+                msg.innerText = "Invalid username or password"
+                msg.style.color = "#ff4d4d"
+            }
+
+        }
+
+        /* Forgot Password Logic */
+        function openForgotModal() {
+            document.getElementById("forgotModal").style.display = "flex";
+            document.getElementById("forgotStep1").style.display = "block";
+            document.getElementById("forgotStep2").style.display = "none";
+            document.getElementById("forgotMsg").innerText = "";
+        }
+
+        function closeForgotModal() {
+            document.getElementById("forgotModal").style.display = "none";
+        }
+
+        function sendResetLink() {
+            const email = document.getElementById("forgotEmail").value;
+            const users = JSON.parse(localStorage.getItem("users") || "{}");
+            const msg = document.getElementById("forgotMsg");
+
+            if (!validEmail(email)) {
+                msg.innerText = "Enter a valid Gmail address";
+                msg.style.color = "#ff4d4d";
+                return;
+            }
+
+            if (!users[email]) {
+                msg.innerText = "This Gmail is not registered";
+                msg.style.color = "#ff4d4d";
+                return;
+            }
+
+            msg.innerText = "Reset link sent! (Simulated)";
+            msg.style.color = "#00ffd5";
+
+            setTimeout(() => {
+                document.getElementById("forgotStep1").style.display = "none";
+                document.getElementById("forgotStep2").style.display = "block";
+                msg.innerText = "";
+            }, 1000);
+        }
+
+        function finishPasswordReset() {
+            const email = document.getElementById("forgotEmail").value;
+            const newPass = document.getElementById("resetNewPass").value;
+            const confirmPass = document.getElementById("resetConfirmPass").value;
+            const msg = document.getElementById("forgotMsg");
+            let users = JSON.parse(localStorage.getItem("users") || "{}");
+
+            if (!strongPassword(newPass)) {
+                msg.innerText = "Password must be 8+ chars with uppercase & number";
+                msg.style.color = "#ff4d4d";
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                msg.innerText = "Passwords do not match";
+                msg.style.color = "#ff4d4d";
+                return;
+            }
+
+            users[email] = newPass;
+            localStorage.setItem("users", JSON.stringify(users));
+
+            msg.innerText = "Password successfully changed!";
+            msg.style.color = "#00ffd5";
+
+            setTimeout(() => {
+                closeForgotModal();
+                switchLoginTab('login');
+                document.getElementById("loginMsg").innerText = "Password reset. You can now login.";
+                document.getElementById("loginMsg").style.color = "#00ffd5";
+            }, 1500);
+        }
+
+        /* Enter to login */
+        document.getElementById("password").addEventListener("keypress", (e) => {
+            if(e.key === "Enter") handleAuth();
+        });
+        document.getElementById("email").addEventListener("keypress", (e) => {
+            if(e.key === "Enter") handleAuth();
+        });
+
+        /* Password Visibility Toggle */
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if(input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        /* Profile Management Logic */
+        function openProfileModal() {
+            const isGuest = localStorage.getItem("isGuest") === "true";
+            if (isGuest) {
+                alert("Please login to edit your profile.");
+                logout(); // Logout to show login screen
+                return;
+            }
+            const user = localStorage.getItem("currentUser");
+            if (!user) return;
+            document.getElementById("currentUserDisplay").innerText = "Logged in as: " + user;
+            document.getElementById("profileModal").style.display = "flex";
+            document.getElementById("profileDropdown").style.display = "none";
+        }
+
+        function closeProfileModal() {
+            document.getElementById("profileModal").style.display = "none";
+            document.getElementById("profileMsg").innerText = "";
+            document.getElementById("currPass").value = "";
+            document.getElementById("newPass").value = "";
+        }
+
+        function saveProfileUpdates() {
+            const email = localStorage.getItem("currentUser");
+            const newName = document.getElementById("newName").value;
+            const currPass = document.getElementById("currPass").value;
+            const newPass = document.getElementById("newPass").value;
+            const msg = document.getElementById("profileMsg");
+
+            let users = JSON.parse(localStorage.getItem("users") || "{}");
+            
+            // 1. Update Username in Header
+            if(newName.trim() !== "") {
+                const profileBtns = document.querySelectorAll(".profile-btn");
+                profileBtns.forEach(btn => btn.innerText = newName);
+                localStorage.setItem("displayName_" + email, newName);
+            }
+
+            // 2. Change Password
+            if(currPass !== "" || newPass !== "") {
+                if(users[email] !== currPass) {
+                    msg.innerText = "Current password incorrect";
+                    msg.style.color = "#ff4d4d";
+                    return;
+                }
+                if(!strongPassword(newPass)) {
+                    msg.innerText = "New password too weak";
+                    msg.style.color = "#ff4d4d";
+                    return;
+                }
+                users[email] = newPass;
+                localStorage.setItem("users", JSON.stringify(users));
+                msg.innerText = "Password updated!";
+                msg.style.color = "#00ffd5";
+            }
+            
+            setTimeout(closeProfileModal, 1500);
         }
 
         function guestLogin() {
@@ -983,6 +1525,14 @@
             document.getElementById("dashboard").style.display = "block"
 
             initSessionData();
+
+            const email = localStorage.getItem("currentUser");
+            if(!isGuest && email) {
+                const savedName = localStorage.getItem("displayName_" + email);
+                if(savedName) {
+                    document.querySelector(".profile-btn").innerText = savedName;
+                }
+            }
 
             let analyticsItem = document.getElementById("analyticsItem");
             if (analyticsItem) {
