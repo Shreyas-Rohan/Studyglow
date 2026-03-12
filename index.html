@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyGlow Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700&family=Oxanium:wght@400;800&family=Outfit:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
@@ -116,14 +116,14 @@
             margin: 15px auto;
             font-size: clamp(2rem, 9vw, 3.8rem);
             font-weight: 800;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             background: linear-gradient(90deg, #00f5ff, #00ff9c, #00f5ff);
             background-size: 200% auto;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(0, 255, 213, 0.4);
-            letter-spacing: -1px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             width: 95%;
             line-height: 1;
@@ -506,6 +506,44 @@
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
+        #loginTitle {
+            font-family: 'Oxanium', sans-serif;
+            font-weight: 800;
+            letter-spacing: 5px;
+            margin-bottom: 35px;
+            background: linear-gradient(90deg, #00ffd5, #00f5ff, #03dac6, #00f5ff, #00ffd5);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            font-size: 46px;
+            animation: titleShift 6s ease-in-out infinite, neonPulse 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(0, 255, 213, 0.45));
+            display: inline-block;
+        }
+
+        @keyframes titleShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes neonPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(0, 255, 213, 0.4)); }
+            50% { transform: scale(1.04); filter: drop-shadow(0 0 25px rgba(0, 255, 213, 0.7)); }
+        }
+
+        body.light #loginTitle {
+            background: linear-gradient(135deg, #1a365d, #4299e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            background-color: transparent;
+            filter: none;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.08);
+            animation: none;
+        }
+
         /* Ambient glowing background inside the card */
         .login-container::before {
             content: '';
@@ -565,6 +603,28 @@
             outline: none;
         }
 
+        .guest-btn {
+            width: 100%;
+            background: rgba(0, 245, 255, 0.05) !important;
+            color: #00f5ff !important;
+            border: 1px solid rgba(0, 245, 255, 0.3) !important;
+            padding: 12px !important;
+            font-size: 14px !important;
+            border-radius: 14px !important;
+            margin-top: 15px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 4px 15px rgba(0, 245, 255, 0.05);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .guest-btn:hover {
+            background: rgba(0, 245, 255, 0.1) !important;
+            border-color: #00f5ff !important;
+            box-shadow: 0 0 25px rgba(0, 245, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
         .input-group i {
             position: absolute;
             right: 15px;
@@ -606,12 +666,7 @@
             box-shadow: 0 4px 15px rgba(0, 255, 213, 0.3);
         }
 
-        .login-container h2 {
-            color: #fff;
-            margin-bottom: 20px;
-            font-size: 24px;
-            text-shadow: 0 0 10px #00ffd5;
-        }
+
 
         .login-container button {
             margin: 8px;
@@ -698,7 +753,7 @@
 <body>
     <div id="loginScreen" class="login-container">
         <div style="font-size: 45px; margin-bottom: 10px; filter: drop-shadow(0 0 10px #00ffd5);">💡</div>
-        <h2 id="loginTitle" style="font-family: 'Outfit', sans-serif; font-weight: 800; letter-spacing: 1px; margin-bottom: 20px;">StudyGlow</h2>
+        <h2 id="loginTitle">StudyGlow</h2>
         
         <div class="login-tabs">
             <div class="login-tab active" id="tab-login" onclick="switchLoginTab('login')">LOGIN</div>
@@ -726,7 +781,7 @@
             <div style="height: 1px; background: rgba(255,255,255,0.1); flex:1;"></div>
         </div>
         
-        <button onclick="guestLogin()" style="width: 100%; background: transparent; color: #00f5ff; border: 1px solid #00f5ff; padding: 10px; font-size: 13px;">Guest User</button>
+        <button onclick="guestLogin()" class="guest-btn">Guest User</button>
         <p id="loginMsg" style="margin-top: 15px; font-size: 13px; font-weight: bold;"></p>
     </div>
 
@@ -865,7 +920,7 @@
             <div class="card">
                 Break Time (auto-locked)<br><br>
                 <span id="breakTime">10 minutes</span>
-                <div class="locked">Calculated as 1/6 of study time</div>
+                <div class="locked"></div>
             </div>
 
         </div>
@@ -1115,6 +1170,7 @@
 
             /* Track session start */
             sessionStartTime = new Date();
+            fetch("http://10.54.81.238/?time=" + studyMinutes).catch(e => console.log(e)); 
 
         }
 
@@ -1564,5 +1620,3 @@
 </body>
 
 </html>
-
-
